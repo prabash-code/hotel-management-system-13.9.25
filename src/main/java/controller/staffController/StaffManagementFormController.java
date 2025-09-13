@@ -18,110 +18,116 @@ import java.util.ResourceBundle;
 
 public class StaffManagementFormController implements Initializable {
 
-    StaffManagementService staffManagementService=new StaffManagementController();
+    StaffManagementService staffManagementService = new StaffManagementController();
 
-        @FXML
-        private JFXButton Search;
+    @FXML
+    private JFXButton Search;
 
-        @FXML
-        private JFXButton btnAdd;
+    @FXML
+    private JFXButton btnAdd;
 
-        @FXML
-        private JFXButton btnClean;
+    @FXML
+    private JFXButton btnClean;
 
-        @FXML
-        private JFXButton btnDelete;
+    @FXML
+    private JFXButton btnDelete;
 
-        @FXML
-        private JFXButton btnUpdate;
+    @FXML
+    private JFXButton btnUpdate;
 
-        @FXML
-        private JFXButton btnView;
+    @FXML
+    private JFXButton btnView;
 
-        @FXML
-        private JFXComboBox<String> cmbCategory;
+    @FXML
+    private JFXComboBox<String> cmbCategory;
 
-        @FXML
-        private JFXComboBox<String> cmbUnit;
+    @FXML
+    private JFXComboBox<String> cmbUnit;
 
-        @FXML
-        private TableColumn<?, ?> colCategory;
+    @FXML
+    private TableColumn<?, ?> colCategory;
 
-        @FXML
-        private TableColumn<?, ?> colId;
+    @FXML
+    private TableColumn<?, ?> colId;
 
-        @FXML
-        private TableColumn<?, ?> colName;
+    @FXML
+    private TableColumn<?, ?> colName;
 
-        @FXML
-        private TableColumn<?, ?> colSalary;
+    @FXML
+    private TableColumn<?, ?> colSalary;
 
-        @FXML
-        private TableColumn<?, ?> colUnit;
+    @FXML
+    private TableColumn<?, ?> colUnit;
 
-        @FXML
-        private TableView<Staff> tblStaff;
+    @FXML
+    private TableView<Staff> tblStaff;
 
-        @FXML
-        private JFXTextField txtId;
+    @FXML
+    private JFXTextField txtId;
 
-        @FXML
-        private JFXTextField txtName;
+    @FXML
+    private JFXTextField txtName;
 
-        @FXML
-        private JFXTextField txtSalary;
+    @FXML
+    private JFXTextField txtSalary;
 
-        @FXML
-        void AddOnAction(ActionEvent event) {
-            Staff staff = new Staff(
-                    txtId.getText(),
-                    txtName.getText(),
-                    cmbCategory.getValue().toString(),
-                    cmbUnit.getValue().toString(),
-                    Double.parseDouble(txtSalary.getText())
+    @FXML
+    void AddOnAction(ActionEvent event) {
+        Staff staff = new Staff(
+                txtId.getText(),
+                txtName.getText(),
+                cmbCategory.getValue().toString(),
+                cmbUnit.getValue().toString(),
+                Double.parseDouble(txtSalary.getText())
 
-            );
-            staffManagementService.add(staff);
-            viewOnAction(event);
-        }
+        );
+        staffManagementService.add(staff);
+        viewOnAction(event);
+        CleanOnAction(event);
+    }
 
-        @FXML
-        void CleanOnAction(ActionEvent event) {
+    @FXML
+    void CleanOnAction(ActionEvent event) {
         txtId.setText(null);
         txtName.setText(null);
         txtSalary.setText(null);
         cmbUnit.setValue(null);
         cmbCategory.setValue(null);
-        }
+    }
 
-        @FXML
-        void deleteOnAction(ActionEvent event) {
+    @FXML
+    void deleteOnAction(ActionEvent event) {
+        String id = txtId.getText();
+        staffManagementService.delete(id);
+        viewOnAction(event);
+        CleanOnAction(event);
 
-        }
+    }
 
-        @FXML
-        void searchOnAction(ActionEvent event) {
+    @FXML
+    void searchOnAction(ActionEvent event) {
 
-        }
+    }
 
-        @FXML
-        void updateOnAction(ActionEvent event) {
-            Staff staff = new Staff(
-                    txtId.getText(),
-                    txtName.getText(),
-                    cmbCategory.getValue().toString(),
-                    cmbUnit.getValue().toString(),
-                    Double.parseDouble(txtSalary.getText())
+    @FXML
+    void updateOnAction(ActionEvent event) {
+        Staff staff = new Staff(
+                txtId.getText(),
+                txtName.getText(),
+                cmbCategory.getValue().toString(),
+                cmbUnit.getValue().toString(),
+                Double.parseDouble(txtSalary.getText())
 
-            );
-            staffManagementService.update(staff);
-            viewOnAction(event);
-        }
+        );
+        staffManagementService.update(staff);
+        viewOnAction(event);
+        CleanOnAction(event);
+    }
 
-        @FXML
-        void viewOnAction(ActionEvent event) {
-            tblStaff.setItems(staffManagementService.view());
-        }
+    @FXML
+    void viewOnAction(ActionEvent event) {
+        tblStaff.setItems(staffManagementService.view());
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -131,7 +137,7 @@ public class StaffManagementFormController implements Initializable {
         colUnit.setCellValueFactory(new PropertyValueFactory<>("unit"));
         colSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
 
-        ObservableList<String> categoryList= FXCollections.observableArrayList(
+        ObservableList<String> categoryList = FXCollections.observableArrayList(
                 "Chef",
                 "Helper",
                 "Reception",
@@ -139,7 +145,7 @@ public class StaffManagementFormController implements Initializable {
         );
         cmbCategory.setItems(categoryList);
 
-        ObservableList<String> unitList=FXCollections.observableArrayList(
+        ObservableList<String> unitList = FXCollections.observableArrayList(
                 "Kitchen",
                 "Hall",
                 "Rooms",

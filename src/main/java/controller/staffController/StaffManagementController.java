@@ -67,5 +67,14 @@ public class StaffManagementController implements StaffManagementService {
             throw new RuntimeException(e);
         }
     }
-    public void delete(String id){}
+    public void delete(String id){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from staff where Id=?;");
+            preparedStatement.setObject(1,id);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
