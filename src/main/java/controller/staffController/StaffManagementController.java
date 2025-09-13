@@ -41,4 +41,19 @@ public class StaffManagementController implements StaffManagementService {
         }
         return staffList;
     }
+    public void add(Staff staff){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("Insert into staff values(?,?,?,?,?);");
+            preparedStatement.setObject(1,staff.getId());
+            preparedStatement.setObject(2,staff.getName());
+            preparedStatement.setObject(3,staff.getCategory());
+            preparedStatement.setObject(4,staff.getUnit());
+            preparedStatement.setObject(5,staff.getSalary());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void update(Staff staff){}
+    public void delete(String id){}
 }

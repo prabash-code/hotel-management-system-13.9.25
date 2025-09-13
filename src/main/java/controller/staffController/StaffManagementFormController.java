@@ -73,6 +73,17 @@ public class StaffManagementFormController implements Initializable {
 
         @FXML
         void AddOnAction(ActionEvent event) {
+            Staff staff = new Staff(
+                    txtId.getText(),
+                    txtName.getText(),
+                    cmbCategory.getValue().toString(),
+                    cmbUnit.getValue().toString(),
+                    Double.parseDouble(txtSalary.getText())
+
+            );
+            staffManagementService.add(staff);
+            viewOnAction(event);
+
 
         }
 
@@ -124,7 +135,8 @@ public class StaffManagementFormController implements Initializable {
         ObservableList<String> unitList=FXCollections.observableArrayList(
                 "Kitchen",
                 "Hall",
-                "Rooms"
+                "Rooms",
+                "Reception"
 
         );
         cmbUnit.setItems(unitList);
