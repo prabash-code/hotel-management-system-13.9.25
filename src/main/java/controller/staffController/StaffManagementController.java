@@ -54,6 +54,18 @@ public class StaffManagementController implements StaffManagementService {
             throw new RuntimeException(e);
         }
     }
-    public void update(Staff staff){}
+    public void update(Staff staff){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("update staff set Name=?,Category=?,Unit=?,Salary=? where id=?");
+            preparedStatement.setObject(1,staff.getName());
+            preparedStatement.setObject(2,staff.getCategory());
+            preparedStatement.setObject(3,staff.getUnit());
+            preparedStatement.setObject(4,staff.getSalary());
+            preparedStatement.setObject(5,staff.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void delete(String id){}
 }

@@ -83,8 +83,6 @@ public class StaffManagementFormController implements Initializable {
             );
             staffManagementService.add(staff);
             viewOnAction(event);
-
-
         }
 
         @FXML
@@ -108,7 +106,16 @@ public class StaffManagementFormController implements Initializable {
 
         @FXML
         void updateOnAction(ActionEvent event) {
+            Staff staff = new Staff(
+                    txtId.getText(),
+                    txtName.getText(),
+                    cmbCategory.getValue().toString(),
+                    cmbUnit.getValue().toString(),
+                    Double.parseDouble(txtSalary.getText())
 
+            );
+            staffManagementService.update(staff);
+            viewOnAction(event);
         }
 
         @FXML
