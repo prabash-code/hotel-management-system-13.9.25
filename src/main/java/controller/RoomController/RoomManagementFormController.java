@@ -1,4 +1,4 @@
-package controller;
+package controller.RoomController;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,12 +17,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import model.RoomDetails;
 
 import java.net.URL;
-import java.sql.*;
 import java.util.ResourceBundle;
 
 public class RoomManagementFormController implements Initializable {
 
     ObservableList <RoomDetails> roomDetails = FXCollections.observableArrayList();
+    //RoomManagementController roomManagementController=new RoomManagementController();
+    RoomManagementService roomManagementService=new RoomManagementController();
 
     @FXML
     private JFXRadioButton availableRadio;
@@ -79,32 +79,20 @@ public class RoomManagementFormController implements Initializable {
     @FXML
     void btnAddOnAction(ActionEvent event) {
 
-        int roomNumber = Integer.parseInt(txtRoomNumber.getText());
-        String roomType = roomTypeCombo.getValue();
-        double pricePerNight = Double.parseDouble(txtPricePerNight.getText());
-        String description = txtDescription.getText();
-        String roomStatus = checkRoomStatus();
+        RoomDetails details=new RoomDetails(
+                Integer.parseInt(txtRoomNumber.getText()),
+                roomTypeCombo.getValue(),
+                Double.parseDouble(txtPricePerNight.getText()),
+                txtDescription.getText(),
+                checkRoomStatus()
 
-        String SQL = "INSERT INTO rooms(room_number, room_type, price_per_night, description, room_status) VALUES(?,?,?,?,?);";
+        );
 
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation","root","1234");
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
 
-            preparedStatement.setObject(1,roomNumber);
-            preparedStatement.setObject(2,roomType);
-            preparedStatement.setObject(3,pricePerNight);
-            preparedStatement.setObject(4,description);
-            preparedStatement.setObject(5,roomStatus);
+        roomManagementService.addRoomDetails(details);
 
-            preparedStatement.executeUpdate();
-
-            loadRoomDetails();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+        loadRoomDetails();
+        btnClearOnAction(event);
 
     }
 
@@ -122,10 +110,33 @@ public class RoomManagementFormController implements Initializable {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
+        String id=txtRoomNumber.getText();
+        RoomManagementController roomManagementController=new RoomManagementController();
+        roomManagementController.deleteRoomDetails(id);
+
+        loadRoomDetails();
+        btnClearOnAction(event);
+
     }
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
+
+        RoomDetails details=new RoomDetails(
+                Integer.parseInt(txtRoomNumber.getText()),
+                roomTypeCombo.getValue(),
+                Double.parseDouble(txtPricePerNight.getText()),
+                txtDescription.getText(),
+                checkRoomStatus()
+
+        );
+
+
+        roomManagementService.updateDetails(details);
+
+
+        loadRoomDetails();
+        btnClearOnAction(event);
     }
 
     @Override
@@ -145,6 +156,7 @@ public class RoomManagementFormController implements Initializable {
 
         availableRadio.setToggleGroup(roomStstusToggleGroup);
         unavailableRadio.setToggleGroup(roomStstusToggleGroup);
+        maintenanceRadio.setToggleGroup(roomStstusToggleGroup);
 //        --------------------------------------------
 
 //        ------set table details----------
@@ -154,36 +166,21 @@ public class RoomManagementFormController implements Initializable {
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colRoomStatus.setCellValueFactory(new PropertyValueFactory<>("roomStatus"));
 
-        tblRoomDetails.setItems(loadRoomDetails());
+        loadRoomDetails();
+        tblRoomDetails.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue!=null){
+                    setSelectedValue(newValue);
 
-//        ------------------------------------
+            }
+        });
 
     }
 
-    private ObservableList<RoomDetails> loadRoomDetails(){
+    private void loadRoomDetails(){
+        roomDetails.clear();
 
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation","root","1234");
-            PreparedStatement preparedStatement = connection.prepareStatement("Select * FROM rooms;");
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                roomDetails.add(new RoomDetails(
-                        resultSet.getInt("room_number"),
-                        resultSet.getString("room_type"),
-                        resultSet.getDouble("price_per_night"),
-                        resultSet.getString("description"),
-                        resultSet.getString("room_status")
-                        )
-                );
-            }
-
-//            System.out.println(roomDetails);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return roomDetails;
+        ObservableList roomDetails=roomManagementService.getAllRoomDetails();
+        tblRoomDetails.setItems(roomDetails);
     }
 
     private String checkRoomStatus(){
@@ -195,4 +192,21 @@ public class RoomManagementFormController implements Initializable {
         return "UnAvailable";
     }
 
+    public void setSelectedValue(RoomDetails selectedValue){
+        txtRoomNumber.setText(String.valueOf(selectedValue.getRoomNumber()));
+        txtDescription.setText(selectedValue.getDescription());
+        txtPricePerNight.setText(String.valueOf(selectedValue.getPricePerNight()));
+        roomTypeCombo.setValue(selectedValue.getRoomType());
+
+        if(selectedValue.getRoomStatus().equals("Available")){
+            availableRadio.setSelected(true);
+        }
+        if(selectedValue.getRoomStatus().equals("Booked")){
+           unavailableRadio.setSelected(true);
+        }
+        if(selectedValue.getRoomStatus().equals("Maintenance")){
+            maintenanceRadio.setSelected(true);
+        }
+
+    }
 }
