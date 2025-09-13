@@ -13,6 +13,8 @@ public class DashboardFormController {
 
     Stage roomManagement = new Stage();
     Stage customerManagement = new Stage();
+    Stage staffManagement = new Stage();
+    Stage foodManagement = new Stage();
 
     @FXML
     private JFXButton btnRoomManagement;
@@ -36,5 +38,25 @@ public class DashboardFormController {
         }
         customerManagement.setResizable(false);
         customerManagement.show();
+    }
+
+    public void btnStaffOnAction(ActionEvent actionEvent) {
+        try {
+            staffManagement.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/StaffManagement.fxml"))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        staffManagement.setResizable(false);
+        staffManagement.show();
+    }
+
+    public void foodManagementOnAction(ActionEvent actionEvent) {
+        try {
+            foodManagement.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/FoodAndBeverageManagement.fxml"))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        foodManagement.setResizable(false);
+        foodManagement.show();
     }
 }
