@@ -18,6 +18,8 @@ import java.util.ResourceBundle;
 
 public class StaffManagementFormController implements Initializable {
 
+    StaffManagementService staffManagementService=new StaffManagementController();
+
         @FXML
         private JFXButton Search;
 
@@ -58,7 +60,7 @@ public class StaffManagementFormController implements Initializable {
         private TableColumn<?, ?> colUnit;
 
         @FXML
-        private TableView<?> tblStaff;
+        private TableView<Staff> tblStaff;
 
         @FXML
         private JFXTextField txtId;
@@ -76,7 +78,11 @@ public class StaffManagementFormController implements Initializable {
 
         @FXML
         void CleanOnAction(ActionEvent event) {
-
+        txtId.setText(null);
+        txtName.setText(null);
+        txtSalary.setText(null);
+        cmbUnit.setValue(null);
+        cmbCategory.setValue(null);
         }
 
         @FXML
@@ -96,7 +102,7 @@ public class StaffManagementFormController implements Initializable {
 
         @FXML
         void viewOnAction(ActionEvent event) {
-
+            tblStaff.setItems(staffManagementService.view());
         }
 
     @Override
